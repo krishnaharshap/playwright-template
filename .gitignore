@@ -1,0 +1,32 @@
+﻿# Scaffolding Script
+setup-playwright-template.ps1
+
+# Dependencies
+node_modules/
+.venv/
+venv/
+env/
+bin/
+obj/
+target/
+.gradle/
+build/
+
+# Playwright Specific
+test-results/
+playwright-report/
+blob-report/
+playwright/.local-browsers
+
+# Environment & Secrets
+.env
+*.passwd
+*.pem
+
+# IDEs and OS
+.vscode/
+.idea/
+*.suo
+*.user
+Thumbs.db
+.DS_Store
