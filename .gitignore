@@ -30,3 +30,6 @@ playwright/.local-browsers
 *.user
 Thumbs.db
 .DS_Store
+
+#Documentation
+project-structure.md
