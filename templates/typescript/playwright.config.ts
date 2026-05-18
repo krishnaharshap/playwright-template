@@ -1,8 +1,20 @@
 ﻿import { defineConfig, devices } from '@playwright/test';
 import dotenv from 'dotenv';
 import path from 'path';
+import fs from 'fs';
 
-dotenv.config({ path: path.resolve(__dirname, '../../shared/env/.env') });
+/**
+ * Read environment variables from file.
+ * Note: In the template repo, this path may show an error. 
+ * It resolves correctly in projects generated via tools/repo-generator.
+ */
+const envPath = path.resolve(__dirname, './shared/env/.env');
+
+if (fs.existsSync(envPath)) {
+  dotenv.config({ path: envPath });
+} else {
+  console.warn(`[Config]: Environment file not found at ${envPath}. Falling back to system environment variables.`);
+}
 
 export default defineConfig({
   testDir: './tests',
@@ -10,7 +22,7 @@ export default defineConfig({
   forbidOnly: !!process.env.CI,
   retries: process.env.CI ? 2 : 0,
   workers: process.env.CI ? 1 : undefined,
-  reporter: [['html', { outputFolder: '../../reporting/playwright-html' }], ['allure-playwright']],
+  reporter: [['html', { outputFolder: './reporting/playwright-html' }], ['allure-playwright']],
   use: {
     baseURL: process.env.BASE_URL || 'http://localhost:3000',
     trace: 'on-first-retry',

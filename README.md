@@ -11,8 +11,8 @@ This template serves as a reusable accelerator for generating standardized Playw
 
 ## Contact
 - **Author:** Krishna Puppala
-- **LinkedIn:** [Please Contact Here](https://www.linkedin.com/in/krishna-p-472514236)
-- **GitHub:** [krishnaharshap](https://github.com/krishnaharshap)
+- **LinkedIn:** [Krishna Puppala](https://www.linkedin.com/in/krishna-p-472514236)
+- **GitHub:** [@krishnaharshap](https://github.com/krishnaharshap)
 
 ## License
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
