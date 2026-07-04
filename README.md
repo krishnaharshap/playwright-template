@@ -3,11 +3,20 @@
 A multi-language, language-agnostic QA automation framework designed for enterprise scale. 
 This template serves as a reusable accelerator for generating standardized Playwright frameworks.
 
-## Features
-- **Language Support:** TypeScript, Python, Java, JavaScript.
-- **CI/CD Ready:** Pre-configured GitHub Actions for Smoke, Regression, and Security scans.
-- **Architecture:** Shared utilities, contract testing, and AI-ready self-healing integration points.
-- **Reporting:** Integrated Allure and Playwright HTML reports.
+## Current State (implemented today)
+- **Language Support:** Basic scaffolding for TypeScript, Python, Java, JavaScript under `templates/`.
+- **CI/CD:** One reusable GitHub Actions workflow (`.github/workflows/reusable-test-workflow.yml`).
+- **Shared code:** A single logging utility (`shared/utilities/Logger.ts`).
+- **Tooling:** An early repo-generator script (`tools/repo-generator/generate.ps1`).
+
+## Target Architecture (planned, not yet built)
+See [roadmap.md](roadmap.md) for phased delivery. The full vision:
+- **CI/CD:** Dedicated Smoke, Regression, API, and Security-scan workflows.
+- **Architecture:** Contract testing, shared fixtures/mocks/schemas, AI-ready self-healing integration points.
+- **Reporting:** Integrated Allure and Playwright HTML reports across languages.
+- **Extras:** Docker-based execution (Playwright + Selenium Grid), worked examples, docs site.
+
+`project-structure.md` shows this full target layout labeled by what's live vs planned.
 
 ## Contact
 - **Author:** Krishna Puppala
