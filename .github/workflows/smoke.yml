@@ -1,0 +1,28 @@
+name: Smoke
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  smoke:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - language: typescript
+            working_directory: templates/typescript
+          - language: javascript
+            working_directory: templates/javascript
+          - language: python
+            working_directory: templates/python
+          - language: java
+            working_directory: templates/java
+    uses: ./.github/workflows/reusable-test-workflow.yml
+    with:
+      language: ${{ matrix.language }}
+      working_directory: ${{ matrix.working_directory }}
+      test_type: smoke

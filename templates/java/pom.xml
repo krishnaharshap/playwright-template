@@ -13,7 +13,7 @@
     <dependency>
       <groupId>com.microsoft.playwright</groupId>
       <artifactId>playwright</artifactId>
-      <version>\</version>
+      <version>${playwright.version}</version>
     </dependency>
     <dependency>
       <groupId>org.junit.jupiter</groupId>
