@@ -78,7 +78,21 @@ jobs:
 
       - name: Install Playwright browsers (Java)
         if: inputs.language == 'java'
-        run: mvn -B exec:java -Dexec.mainClass=com.microsoft.playwright.CLI -Dexec.args="install --with-deps chromium"
+        # Playwright's browser CDN (playwright.azureedge.net) intermittently returns
+        # 400 GatewayExceptionResponse; it self-recovers via a mirror on retry, but the
+        # Java CLI has no built-in retry loop of its own, so wrap it with one here.
+        run: |
+          n=0
+          until [ $n -ge 3 ]; do
+            mvn -B exec:java -Dexec.mainClass=com.microsoft.playwright.CLI -Dexec.args="install --with-deps chromium" && break
+            n=$((n + 1))
+            echo "Attempt $n failed, retrying in 10s..."
+            sleep 10
+          done
+          if [ $n -ge 3 ]; then
+            echo "Playwright browser install failed after 3 attempts"
+            exit 1
+          fi
 
       - name: Run Maven tests
         if: inputs.language == 'java'
