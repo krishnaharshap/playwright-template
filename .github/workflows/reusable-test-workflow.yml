@@ -1,39 +1,109 @@
-﻿name: Reusable Playwright Test Workflow
+name: Reusable Playwright Test Workflow
 
 on:
   workflow_call:
     inputs:
-      environment:
+      language:
+        description: "typescript | javascript | python | java"
+        required: true
+        type: string
+      working_directory:
+        description: "Path to the template to test, e.g. templates/typescript"
         required: true
         type: string
       test_type:
+        description: "Tag/marker/group to filter by, e.g. smoke or regression"
         required: true
         type: string
 
 jobs:
   run-tests:
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ${{ inputs.working_directory }}
+    env:
+      # No real target app exists in this template repo; example.com is a stable, public
+      # page whose title ("Example Domain") is what every template's example test asserts
+      # against. Real projects generated from this template set BASE_URL to their own app.
+      BASE_URL: ${{ vars.BASE_URL || 'https://example.com' }}
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+
+      # --- Node-based templates (TypeScript / JavaScript) ---
+      - name: Set up Node
+        if: inputs.language == 'typescript' || inputs.language == 'javascript'
+        uses: actions/setup-node@v4
         with:
           node-version: 20
-      
-      - name: Install dependencies
-        run: npm ci
 
-      - name: Install Playwright Browsers
-        run: npx playwright install --with-deps
+      - name: Install Node dependencies
+        if: inputs.language == 'typescript' || inputs.language == 'javascript'
+        run: npm install
+
+      - name: Install Playwright browsers
+        if: inputs.language == 'typescript' || inputs.language == 'javascript'
+        run: npx playwright install --with-deps chromium
 
       - name: Run Playwright tests
-        run: npx playwright test --grep @${{ inputs.test_type }}
-        env:
-          BASE_URL: ${{ vars.BASE_URL }}
+        if: inputs.language == 'typescript' || inputs.language == 'javascript'
+        run: npx playwright test --project=chromium --grep @${{ inputs.test_type }}
 
+      # --- Python template ---
+      - name: Set up Python
+        if: inputs.language == 'python'
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install Python dependencies
+        if: inputs.language == 'python'
+        run: pip install -r requirements.txt
+
+      - name: Install Playwright browsers (Python)
+        if: inputs.language == 'python'
+        run: playwright install --with-deps chromium
+
+      - name: Run pytest tests
+        if: inputs.language == 'python'
+        run: pytest -m ${{ inputs.test_type }} --base-url="$BASE_URL"
+
+      # --- Java template ---
+      - name: Set up Java
+        if: inputs.language == 'java'
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - name: Install Playwright browsers (Java)
+        if: inputs.language == 'java'
+        # Playwright's browser CDN (playwright.azureedge.net) intermittently returns
+        # 400 GatewayExceptionResponse; it self-recovers via a mirror on retry, but the
+        # Java CLI has no built-in retry loop of its own, so wrap it with one here.
+        run: |
+          n=0
+          until [ $n -ge 3 ]; do
+            mvn -B exec:java -Dexec.mainClass=com.microsoft.playwright.CLI -Dexec.args="install --with-deps chromium" && break
+            n=$((n + 1))
+            echo "Attempt $n failed, retrying in 10s..."
+            sleep 10
+          done
+          if [ $n -ge 3 ]; then
+            echo "Playwright browser install failed after 3 attempts"
+            exit 1
+          fi
+
+      - name: Run Maven tests
+        if: inputs.language == 'java'
+        run: mvn -B test "-Dgroups=${{ inputs.test_type }}"
+
+      # --- Reports (TS/JS/Python write into ./reporting; Java has no report step yet) ---
       - name: Upload Report
-        if: always()
+        if: always() && inputs.language != 'java'
         uses: actions/upload-artifact@v4
         with:
-          name: playwright-report-${{ inputs.test_type }}
-          path: playwright-report/
+          name: ${{ inputs.language }}-${{ inputs.test_type }}-report
+          path: ${{ inputs.working_directory }}/reporting/
           retention-days: 30
+          if-no-files-found: ignore

@@ -3,6 +3,7 @@ setup-playwright-template.ps1
 
 # Dependencies
 node_modules/
+package-lock.json
 .venv/
 venv/
 env/
@@ -11,12 +12,18 @@ obj/
 target/
 .gradle/
 build/
+__pycache__/
+*.pyc
 
 # Playwright Specific
 test-results/
 playwright-report/
 blob-report/
 playwright/.local-browsers
+allure-results/
+
+# Per-template report output (configured as ./reporting in playwright.config.*/pytest.ini)
+reporting/
 
 # Environment & Secrets
 .env

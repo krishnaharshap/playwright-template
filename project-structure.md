@@ -4,15 +4,15 @@ playwright-template/
 │
 ├── .github/
 │   ├── workflows/
-│   │   ├── smoke.yml                       (planned)
+│   │   ├── smoke.yml                       (LIVE - matrix over all 4 templates)
 │   │   ├── regression.yml                  (planned)
 │   │   ├── api-tests.yml                   (planned)
 │   │   ├── security-scan.yml                (planned)
 │   │   ├── lint.yml                        (planned)
-│   │   └── reusable-test-workflow.yml      (LIVE)
+│   │   └── reusable-test-workflow.yml      (LIVE - language-parameterized: TS/JS/Python/Java)
 │   └── CODEOWNERS                          (LIVE)
 │
-├── templates/                              (LIVE - basic scaffolding)
+├── templates/                              (LIVE - scaffolding with a passing @smoke example per language)
 │   ├── typescript/
 │   ├── javascript/
 │   ├── python/
